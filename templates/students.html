@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Students | Student Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">Student Management</a>
+        <nav>
+            <a href="/">Add Student</a>
+            <a class="active" href="/students">All Students</a>
+        </nav>
+    </header>
+
+    <main class="container wide">
+        <section class="page-heading heading-row">
+            <div>
+                <p class="eyebrow">DATABASE OVERVIEW</p>
+                <h1>All Students</h1>
+                <p>View and manage registered student records.</p>
+            </div>
+            <a class="btn primary" href="/">+ Add Student</a>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <section class="panel table-panel">
+            {% if students %}
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td>{{ student.student_id }}</td>
+                                    <td>{{ student.full_name }}</td>
+                                    <td>{{ student.email }}</td>
+                                    <td>
+                                        <span class="department-badge">
+                                            {{ student.department }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="actions">
+                                            <a class="btn small secondary"
+                                               href="{{ url_for('edit_student', student_id=student.student_id) }}">
+                                                Edit
+                                            </a>
+
+                                            <form method="POST"
+                                                  action="{{ url_for('delete_student', student_id=student.student_id) }}"
+                                                  onsubmit="return confirm('Delete this student permanently?');">
+                                                <button class="btn small danger"
+                                                        type="submit">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h2>No students yet</h2>
+                    <p>Add your first student to see a record here.</p>
+                    <a class="btn primary" href="/">Add Student</a>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
